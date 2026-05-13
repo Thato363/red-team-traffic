@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="1">
+    <title>Traffic Control Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+ 
+<body class="bg-slate-900 text-white min-h-screen flex flex-col items-center p-8">
+ 
+    <h1 class="text-4xl font-bold mb-2">Traffic Control Dashboard</h1>
+    <p class="text-slate-400 mb-8">Real-Time Intersection Monitoring System</p>
+ 
+    <!-- Control Actions -->
+    <div class="flex gap-4 flex-wrap justify-center mb-8">
+        <a href="/start" class="px-5 py-2 rounded bg-emerald-600 hover:bg-emerald-700">Start</a>
+        <a href="/stop" class="px-5 py-2 rounded bg-rose-600 hover:bg-rose-700">Stop</a>
+        <a href="/rush" class="px-5 py-2 rounded bg-amber-500 hover:bg-amber-600">
+            {{ 'Disable Rush Hour' if rush else 'Enable Rush Hour' }}
+        </a>
+        <a href="/ped" class="px-5 py-2 rounded bg-sky-600 hover:bg-sky-700">Pedestrian Request</a>
+    </div>
+ 
+    <!-- Status Metadata -->
+    <div class="mb-8 text-center">
+        <p class="font-semibold {{ 'text-emerald-400' if running else 'text-rose-400' }}">
+            {{ 'System Running' if running else 'System Stopped' }}
+        </p>
+        <p class="text-slate-300">Rush Hour: <span class="font-bold">{{ 'ON' if rush else 'OFF' }}</span></p>
+    </div>
+ 
+    <!-- Layout Grid -->
+    <div class="flex flex-col md:flex-row gap-8">
+ 
+        <!-- North-South Signal Block -->
+        <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 w-44 text-center shadow-xl">
+            <div class="space-y-3 mx-auto w-fit">
+                <div class="w-14 h-14 rounded-full {{ 'bg-red-500 shadow-red-500/50 shadow-lg' if ns_red else 'bg-slate-700' }}"></div>
+                <div class="w-14 h-14 rounded-full {{ 'bg-yellow-400 shadow-yellow-400/50 shadow-lg' if ns_yellow else 'bg-slate-700' }}"></div>
+                <div class="w-14 h-14 rounded-full {{ 'bg-emerald-500 shadow-emerald-500/50 shadow-lg' if ns_green else 'bg-slate-700' }}"></div>
+            </div>
+            <h2 class="mt-4 font-semibold">North-South</h2>
+            <p class="text-sm text-slate-300 mt-2">
+                {% if ns_green %}Traffic Moving{% elif ns_yellow %}Prepare To Stop{% else %}Stopped{% endif %}
+            </p>
+        </div>
+ 
+        <!-- East-West Signal Block -->
+        <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 w-44 text-center shadow-xl">
+            <div class="space-y-3 mx-auto w-fit">
+                <div class="w-14 h-14 rounded-full {{ 'bg-red-500 shadow-red-500/50 shadow-lg' if ew_red else 'bg-slate-700' }}"></div>
+                <div class="w-14 h-14 rounded-full {{ 'bg-yellow-400 shadow-yellow-400/50 shadow-lg' if ew_yellow else 'bg-slate-700' }}"></div>
+                <div class="w-14 h-14 rounded-full {{ 'bg-emerald-500 shadow-emerald-500/50 shadow-lg' if ew_green else 'bg-slate-700' }}"></div>
+            </div>
+            <h2 class="mt-4 font-semibold">East-West</h2>
+            <p class="text-sm text-slate-300 mt-2">
+                {% if ew_green %}Traffic Moving{% elif ew_yellow %}Prepare To Stop{% else %}Stopped{% endif %}
+            </p>
+        </div>
+ 
+        <!-- Pedestrian Signal Block -->
+        <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 w-44 text-center shadow-xl">
+            <div class="flex justify-center">
+                <div class="w-14 h-14 rounded-full {{ 'bg-red-500 animate-pulse' if ped_red_flash else ('bg-lime-400 shadow-lime-400/50 shadow-lg' if ped_led_green else 'bg-slate-700') }}"></div>
+            </div>
+            <h2 class="mt-4 font-semibold">Pedestrian</h2>
+            <p class="text-sm text-slate-300 mt-2">
+                {% if ped_led_green %}🚶 Cross Now
+                {% elif ped_red_flash %}⚠ Wait
+                {% elif ped_pending %}⏳ Pending
+                {% else %}❌ Do Not Cross{% endif %}
+            </p>
+        </div>
+ 
+    </div>
+</body>
+</html>
